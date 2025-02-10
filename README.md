@@ -1,6 +1,12 @@
 # ChuteManager
 Control parachute speed and pickup
 
+Permissions can be set but are optional.
+
+When flying, player can hold the SPRINT key when moving forward or backward to speed things up a bit.
+
+When picking up a chute, the player will not have to wait for the progress bar.
+
 ## Configuration
 ```json
 {
@@ -15,7 +21,7 @@ Control parachute speed and pickup
   "Version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 3
   }
 }
 ```
