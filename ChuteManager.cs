@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.4")]
+    [Info("ChuteManager", "RFC1920", "1.0.5")]
     [Description("Manage parachute speed and backpack pickup, etc.")]
     internal class ChuteManager : RustPlugin
     {
@@ -33,6 +33,7 @@ namespace Oxide.Plugins
         private const string zipper = "assets/prefabs/deployable/locker/sound/equip_zipper.prefab";
         private const string permFastFlight = "chutemanager.fast";
         private const string permFastPickup = "chutemanager.pickup";
+        private const string permPickupCondition = "chutemanager.condition";
 
         private void OnServerInitialized()
         {
@@ -81,7 +82,14 @@ namespace Oxide.Plugins
                     {
                         Puts(chuteuteunpacked.net.ID.ToString());
                         Item ch = ItemManager.CreateByItemID(602628465);
-                        ch.condition = chuteuteunpacked.health;
+                        if (!configData.Settings.RestoreConditionOnPickup)
+                        {
+                            if (!configData.Settings.RequirePermissionForCondition
+                                || (configData.Settings.RequirePermissionForCondition && permission.UserHasPermission(player.UserIDString, permPickupCondition)))
+                            {
+                                ch.condition = chuteuteunpacked.health;
+                            }
+                        }
                         ch.MoveToContainer(player.inventory.containerMain);
                         chuteuteunpacked.Kill();
                         if (configData.Settings.PlaySoundOnPickup)
@@ -155,8 +163,10 @@ namespace Oxide.Plugins
             public bool AllowFastPickup;
             public bool RequirePermissionForFastPickup;
             public bool RequirePermissionForFastFlight;
+            public bool RequirePermissionForCondition;
             public bool PlaySoundOnPickup;
             public bool ExcludeParachuteFromClothingAmount;
+            public bool RestoreConditionOnPickup;
         }
 
         protected override void LoadDefaultConfig()
