@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.10")]
+    [Info("ChuteManager", "RFC1920", "1.0.11")]
     [Description("Manage parachute speed, backpack pickup, and condition.")]
     internal class ChuteManager : RustPlugin
     {
@@ -158,7 +158,7 @@ namespace Oxide.Plugins
             writer.PacketID(Message.Type.Effect);
             EffectInstance.WriteToStream(writer);
             writer.Send(new SendInfo(player.net.connection));
-            EffectInstance.Clear();
+            EffectInstance.Clear(includeNetworkData: true);
         }
 
         #region config
