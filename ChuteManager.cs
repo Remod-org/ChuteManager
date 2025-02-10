@@ -1,6 +1,6 @@
 ﻿#region License (GPL v2)
 /*
-    DESCRIPTION
+    ChuteManager
     Copyright (c) 2023 RFC1920 <desolationoutpostpve@gmail.com>
 
     This program is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.6")]
-    [Description("Manage parachute speed and backpack pickup, etc.")]
+    [Info("ChuteManager", "RFC1920", "1.0.7")]
+    [Description("Manage parachute speed, backpack pickup, and condition.")]
     internal class ChuteManager : RustPlugin
     {
         private ConfigData configData;
@@ -34,16 +34,20 @@ namespace Oxide.Plugins
         private const string permFastFlight = "chutemanager.fast";
         private const string permFastPickup = "chutemanager.pickup";
         private const string permPickupCondition = "chutemanager.condition";
+        private bool enabled;
 
         private void OnServerInitialized()
         {
             LoadConfigValues();
+            enabled = true;
             permission.RegisterPermission(permFastPickup, this);
             permission.RegisterPermission(permFastFlight, this);
         }
 
         private void OnThreatLevelUpdate(BasePlayer player)
         {
+            if (!enabled) return;
+            if (player == null) return;
             if (!configData.Settings.ExcludeParachuteFromClothingAmount) return;
             if (player.inventory.containerWear.GetAmount(602628465, false) > 0 && player.inventory.containerWear.itemList.Count > 2 && player.cachedThreatLevel > 0)
             {
@@ -55,6 +59,10 @@ namespace Oxide.Plugins
 
         private void OnItemAddedToContainer(ItemContainer container, Item item)
         {
+            if (!enabled) return;
+            if (container == null) return;
+            if (item == null) return;
+
             if (!configData.Settings.ExcludeParachuteFromClothingAmount) return;
             BasePlayer player = container?.entityOwner as BasePlayer;
             if (player != null && item?.info.name == "parachute.item" && container == player.inventory.containerWear && player.inventory.containerWear.itemList.Count > 2 && player.cachedThreatLevel > 0)
