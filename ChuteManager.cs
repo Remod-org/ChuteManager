@@ -1,11 +1,31 @@
-﻿using Network;
+﻿#region License (GPL v2)
+/*
+    DESCRIPTION
+    Copyright (c) 2023 RFC1920 <desolationoutpostpve@gmail.com>
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License v2.0
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+    Optionally you can also view the license at <http://www.gnu.org/licenses/>.
+*/
+#endregion
+using Network;
 using Oxide.Core;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.3")]
+    [Info("ChuteManager", "RFC1920", "1.0.4")]
     [Description("Manage parachute speed and backpack pickup, etc.")]
     internal class ChuteManager : RustPlugin
     {
@@ -19,6 +39,29 @@ namespace Oxide.Plugins
             LoadConfigValues();
             permission.RegisterPermission(permFastPickup, this);
             permission.RegisterPermission(permFastFlight, this);
+        }
+
+        private void OnThreatLevelUpdate(BasePlayer player)
+        {
+            if (!configData.Settings.ExcludeParachuteFromClothingAmount) return;
+            if (player.inventory.containerWear.GetAmount(602628465, false) > 0 && player.inventory.containerWear.itemList.Count > 2 && player.cachedThreatLevel > 0)
+            {
+                Puts("Excluding parachute as a clothing item for otherwise targeted player");
+                player.cachedThreatLevel--;
+                Puts($"Player wearing {player?.inventory.containerWear.itemList.Count} items.  Threat level {player?.cachedThreatLevel}.");
+            }
+        }
+
+        private void OnItemAddedToContainer(ItemContainer container, Item item)
+        {
+            if (!configData.Settings.ExcludeParachuteFromClothingAmount) return;
+            BasePlayer player = container?.entityOwner as BasePlayer;
+            if (player != null && item?.info.name == "parachute.item" && container == player.inventory.containerWear && player.inventory.containerWear.itemList.Count > 2 && player.cachedThreatLevel > 0)
+            {
+                Puts("Excluding added parachute as a clothing item");
+                player.cachedThreatLevel--;
+                Puts($"Player wearing {player?.inventory.containerWear.itemList.Count} items.  Threat level {player?.cachedThreatLevel}.");
+            }
         }
 
         private void OnPlayerInput(BasePlayer player, InputState input)
@@ -113,6 +156,7 @@ namespace Oxide.Plugins
             public bool RequirePermissionForFastPickup;
             public bool RequirePermissionForFastFlight;
             public bool PlaySoundOnPickup;
+            public bool ExcludeParachuteFromClothingAmount;
         }
 
         protected override void LoadDefaultConfig()

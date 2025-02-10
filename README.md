@@ -16,7 +16,8 @@ When picking up a chute, the player will not have to wait for the progress bar.
     "AllowFastPickup": true,
     "RequirePermissionForFastPickup": false,
     "RequirePermissionForFastFlight": false,
-    "PlaySoundOnPickup": true
+    "PlaySoundOnPickup": true,
+    "ExcludeParachuteFromClothingAmount": true
   },
   "Version": {
     "Major": 1,
@@ -32,6 +33,7 @@ When picking up a chute, the player will not have to wait for the progress bar.
  - RequirePermissionForFastPickup -- Require chutemanager.pickup permission to use fast pickup
  - RequirePermissionForFastFlight -- Require chutemanager.fast permission to allow fast flight (SPRINT)
  - PlaySoundOnPickup -- if true, play the zipper sound, otherwise pickup will be silent
+ - ExcludeParachuteFromClothingAmount -- if true, the parachute should not count as a clothing item for the Patrol Helicopter
 
 ## Permissions
  - chutemanager.fast -- Allows player to use the SPRINT key to speed up forward and backward motion when flying (if RequirePermissionForFastFlight == true)
