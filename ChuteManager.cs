@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.7")]
+    [Info("ChuteManager", "RFC1920", "1.0.8")]
     [Description("Manage parachute speed, backpack pickup, and condition.")]
     internal class ChuteManager : RustPlugin
     {
@@ -39,6 +39,11 @@ namespace Oxide.Plugins
         private void OnServerInitialized()
         {
             LoadConfigValues();
+            if (!configData.Settings.RequirePermissionForFastPickup)
+            {
+                // New Convar for October 2023
+                ConsoleSystem.Run(ConsoleSystem.Option.Server.FromServer(), "server.parachuteRepackTime 0");
+            }
             enabled = true;
             permission.RegisterPermission(permFastPickup, this);
             permission.RegisterPermission(permFastFlight, this);
@@ -75,6 +80,10 @@ namespace Oxide.Plugins
 
         private void OnPlayerInput(BasePlayer player, InputState input)
         {
+            // New Convar for October 2023
+            string serverRepackTime = ConsoleSystem.Run(ConsoleSystem.Option.Server.FromServer(), "server.parachuteRepackTime");
+            if (serverRepackTime == "0") return;
+
             if (player == null) return;
             if (input == null) return;
 
