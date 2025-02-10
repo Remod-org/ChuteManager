@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.5")]
+    [Info("ChuteManager", "RFC1920", "1.0.6")]
     [Description("Manage parachute speed and backpack pickup, etc.")]
     internal class ChuteManager : RustPlugin
     {
@@ -82,14 +82,13 @@ namespace Oxide.Plugins
                     {
                         Puts(chuteuteunpacked.net.ID.ToString());
                         Item ch = ItemManager.CreateByItemID(602628465);
-                        if (!configData.Settings.RestoreConditionOnPickup)
+                        if (configData.Settings.RestoreConditionOnPickup
+                            && !configData.Settings.RequirePermissionForCondition
+                            && (!configData.Settings.RequirePermissionForCondition || !permission.UserHasPermission(player.UserIDString, permPickupCondition)))
                         {
-                            if (!configData.Settings.RequirePermissionForCondition
-                                || (configData.Settings.RequirePermissionForCondition && permission.UserHasPermission(player.UserIDString, permPickupCondition)))
-                            {
-                                ch.condition = chuteuteunpacked.health;
-                            }
+                            ch.condition = chuteuteunpacked.health;
                         }
+
                         ch.MoveToContainer(player.inventory.containerMain);
                         chuteuteunpacked.Kill();
                         if (configData.Settings.PlaySoundOnPickup)
