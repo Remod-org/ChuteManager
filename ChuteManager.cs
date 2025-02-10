@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.2")]
+    [Info("ChuteManager", "RFC1920", "1.0.3")]
     [Description("Manage parachute speed and backpack pickup, etc.")]
     internal class ChuteManager : RustPlugin
     {
         private ConfigData configData;
         private const string zipper = "assets/prefabs/deployable/locker/sound/equip_zipper.prefab";
         private const string permFastFlight = "chutemanager.fast";
-        private const string permFastPickup = "chugtemanager.pickup";
+        private const string permFastPickup = "chutemanager.pickup";
 
         private void OnServerInitialized()
         {
