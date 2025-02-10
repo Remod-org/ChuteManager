@@ -13,6 +13,7 @@ When picking up a chute, the player will not have to wait for the progress bar.
   "Settings": {
     "fwdMultiplier": 40.0,
     "revMultiplier": 2.0,
+    "DescentBoost": false,
     "AllowFastPickup": true,
     "RequirePermissionForFastPickup": false,
     "RequirePermissionForFastFlight": false,
@@ -24,7 +25,7 @@ When picking up a chute, the player will not have to wait for the progress bar.
   "Version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 5
+    "Patch": 9
   }
 }
 ```

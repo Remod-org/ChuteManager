@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.8")]
+    [Info("ChuteManager", "RFC1920", "1.0.9")]
     [Description("Manage parachute speed, backpack pickup, and condition.")]
     internal class ChuteManager : RustPlugin
     {
@@ -41,7 +41,6 @@ namespace Oxide.Plugins
             LoadConfigValues();
             if (!configData.Settings.RequirePermissionForFastPickup)
             {
-                // New Convar for October 2023
                 ConsoleSystem.Run(ConsoleSystem.Option.Server.FromServer(), "server.parachuteRepackTime 0");
             }
             enabled = true;
@@ -80,10 +79,6 @@ namespace Oxide.Plugins
 
         private void OnPlayerInput(BasePlayer player, InputState input)
         {
-            // New Convar for October 2023
-            string serverRepackTime = ConsoleSystem.Run(ConsoleSystem.Option.Server.FromServer(), "server.parachuteRepackTime");
-            if (serverRepackTime == "0") return;
-
             if (player == null) return;
             if (input == null) return;
 
@@ -128,6 +123,7 @@ namespace Oxide.Plugins
                 {
                     if (input.IsDown(BUTTON.SPRINT) && chute != null)
                     {
+                        if (configData.Settings.DescentBoost) chute.rigidBody.AddForce(Vector3.down, ForceMode.Impulse);
                         chute.BackInputForceMultiplier = configData.Settings.revMultiplier > 0 ? configData.Settings.revMultiplier : 2f;
                     }
                     else if (chute != null)
@@ -140,6 +136,7 @@ namespace Oxide.Plugins
                 {
                     if (input.IsDown(BUTTON.SPRINT) && chute != null)
                     {
+                        if (configData.Settings.DescentBoost) chute.rigidBody.AddForce(Vector3.down, ForceMode.Impulse);
                         chute.ForwardTiltAcceleration = configData.Settings.fwdMultiplier > 0 ? configData.Settings.fwdMultiplier : 40f;
                     }
                     else if (chute != null)
@@ -176,6 +173,7 @@ namespace Oxide.Plugins
         {
             public float fwdMultiplier;
             public float revMultiplier;
+            public bool DescentBoost;
             public bool AllowFastPickup;
             public bool RequirePermissionForFastPickup;
             public bool RequirePermissionForFastFlight;
