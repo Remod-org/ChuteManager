@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("ChuteManager", "RFC1920", "1.0.11")]
+    [Info("ChuteManager", "RFC1920", "1.0.12")]
     [Description("Manage parachute speed, backpack pickup, and condition.")]
     internal class ChuteManager : RustPlugin
     {
@@ -55,9 +55,7 @@ namespace Oxide.Plugins
             if (!configData.Settings.ExcludeParachuteFromClothingAmount) return;
             if (player.inventory.containerWear.GetAmount(602628465, false) > 0 && player.inventory.containerWear.itemList.Count > 2 && player.cachedThreatLevel > 0)
             {
-                //Puts("Excluding parachute as a clothing item for otherwise targeted player");
                 player.cachedThreatLevel--;
-                //Puts($"Player wearing {player?.inventory.containerWear.itemList.Count} items.  Threat level {player?.cachedThreatLevel}.");
             }
         }
 
@@ -71,9 +69,7 @@ namespace Oxide.Plugins
             BasePlayer player = container?.entityOwner as BasePlayer;
             if (player != null && item?.info.name == "parachute.item" && container == player.inventory.containerWear && player.inventory.containerWear.itemList.Count > 2 && player.cachedThreatLevel > 0)
             {
-                //Puts("Excluding added parachute as a clothing item");
                 player.cachedThreatLevel--;
-                //Puts($"Player wearing {player?.inventory.containerWear.itemList.Count} items.  Threat level {player?.cachedThreatLevel}.");
             }
         }
 
@@ -158,7 +154,7 @@ namespace Oxide.Plugins
             writer.PacketID(Message.Type.Effect);
             EffectInstance.WriteToStream(writer);
             writer.Send(new SendInfo(player.net.connection));
-            EffectInstance.Clear(includeNetworkData: true);
+            EffectInstance.Clear();
         }
 
         #region config
